@@ -129,11 +129,17 @@ class Block(nn.Module):
 
 
 # =========================
-# 主模型（修复版）
+# 主模型（最终稳定版）
 # =========================
 class SKD_TSTSAN_v2(nn.Module):
     def __init__(self, num_classes=5, amp_factor=5, n_segment=2):
         super().__init__()
+
+        # ✅ 修复：统一 amp / amp_factor
+        self.amp = amp_factor
+        self.amp_factor = amp_factor
+
+        self.n_segment = n_segment
 
         self.Aug_Encoder_L = SimpleEncoder(16)
         self.Aug_Encoder_S = SimpleEncoder(1)
@@ -142,9 +148,6 @@ class SKD_TSTSAN_v2(nn.Module):
         self.Aug_Manipulator_L = SimpleManipulator()
         self.Aug_Manipulator_S = SimpleManipulator()
         self.Aug_Manipulator_T = SimpleManipulator()
-
-        self.n_segment = n_segment
-        self.amp = amp_factor
 
         self.stem = nn.Conv2d(32, 64, 3, padding=1)
 
@@ -203,10 +206,10 @@ class SKD_TSTSAN_v2(nn.Module):
         x2 = self.layer1(x2)
         x3 = self.temporal_shift(x3)
 
-        # ===== Transformer（必须在 reshape 前）=====
+        # ===== Transformer（在 reshape 前）=====
         x3_feat = self.transformer(x3, self.n_segment)
 
-        # ===== 还原 batch 维度用于融合 =====
+        # ===== 还原 batch 维度 =====
         bt, c, h, w = x3.shape
         b = bt // self.n_segment
         x3 = x3.reshape(b, self.n_segment, c, h, w).mean(1)
