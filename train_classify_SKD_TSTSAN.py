@@ -9,7 +9,7 @@ if __name__ == '__main__':
     parser.add_argument('--pre_trained', type=strtobool, default=True)
     parser.add_argument('--Aug_COCO_pre_trained', type=strtobool, default=True)
     parser.add_argument('--save_model', type=strtobool, default=True)
-    parser.add_argument('--pre_trained_model_path', type=str, default="/kaggle/working/MERecognition/Pretrained_model/SKD-TSTSAN.pth", help="path to the model weights pre-trained on macro-expression dataset")
+    parser.add_argument('--pre_trained_model_path', type=str, default="/kaggle/working/MERecognition2/Pretrained_model/SKD-TSTSAN.pth", help="path to the model weights pre-trained on macro-expression dataset")
     parser.add_argument('--main_path', type=str, default="/kaggle/working/CASME2_retinaface_loso_3", help="path to the dataset directory")
     parser.add_argument('--exp_name', type=str, default="exp_CASME2_3", help="name of the folder to save experimental results,只是文件名不是路径")
     parser.add_argument('--learning_rate', type=float, default=0.001)
