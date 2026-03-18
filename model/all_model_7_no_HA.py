@@ -171,7 +171,9 @@ class SKD_TSTSAN_v2(nn.Module):
         x3 = input[:, 34:]
         b, c, h, w = x3.shape
 
-        x3 = x3.view(b*self.n_segment, 2, h, w)
+        assert c == 2 * self.n_segment, f"x3 channel mismatch: {c} vs {2 * self.n_segment}"
+
+        x3 = x3.reshape(b * self.n_segment, 2, h, w)
         x3_onset = torch.zeros_like(x3)
 
         # motion
