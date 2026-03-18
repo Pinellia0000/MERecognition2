@@ -109,7 +109,7 @@ class Block(nn.Module):
 # =========================
 # 主模型（去掉 TA）
 # =========================
-class SKD_TSTSAN_v2_no_TA(nn.Module):
+class SKD_TSTSAN_v2(nn.Module):
     def __init__(self, num_classes=5, amp_factor=5, n_segment=2):
         super().__init__()
 
@@ -209,8 +209,6 @@ class SKD_TSTSAN_v2_no_TA(nn.Module):
 # 工厂函数
 # =========================
 def get_model(model_name, class_num, alpha, n_segment=2):
-    if model_name == "SKD_TSTSAN_no_TA":
-        return SKD_TSTSAN_v2_no_TA(class_num, alpha, n_segment)
-    elif model_name in ["SKD_TSTSAN", "SKD_TSTSAN_v2"]:
-        raise ValueError("请使用带TA版本或指定 no_TA")
+    if model_name in ["SKD_TSTSAN", "SKD_TSTSAN_v2"]:
+        return SKD_TSTSAN_v2(class_num, alpha, n_segment)
     raise ValueError(model_name)
