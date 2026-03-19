@@ -13,13 +13,13 @@ class TemporalDifference(nn.Module):
         nt, c, h, w = x.size()
         n_batch = nt // n_segment
 
-        x = x.view(n_batch, n_segment, c, h, w)
+        x = x.reshape(n_batch, n_segment, c, h, w)
 
         diff = x[:, 1:] - x[:, :-1]
         pad = torch.zeros_like(diff[:, :1])
         diff = torch.cat([pad, diff], dim=1)
 
-        return (x + diff).view(nt, c, h, w)
+        return (x + diff).reshape(nt, c, h, w)
 
 
 # =========================
@@ -35,7 +35,7 @@ class TemporalShift(nn.Module):
     def forward(self, x):
         nt, c, h, w = x.size()
         n_batch = nt // self.n_segment
-        x = x.view(n_batch, self.n_segment, c, h, w)
+        x = x.reshape(n_batch, self.n_segment, c, h, w)
 
         fold = max(1, c // self.fold_div)
         out = x.clone()
@@ -43,7 +43,7 @@ class TemporalShift(nn.Module):
         out[:, :-1, :fold] = x[:, 1:, :fold]
         out[:, 1:, fold:2 * fold] = x[:, :-1, fold:2 * fold]
 
-        return self.net(out.view(nt, c, h, w))
+        return self.net(out.reshape(nt, c, h, w))
 
 
 # =========================
@@ -168,7 +168,7 @@ class SKD_TSTSAN(nn.Module):
 
         bsz = x1.shape[0]
 
-        x3 = x3.view(bsz * 2, 2, 48, 48)
+        x3 = x3.reshape(bsz * 2, 2, 48, 48)
         x3_onset = torch.zeros_like(x3)  # ✅ 修复
 
         # motion
@@ -189,7 +189,7 @@ class SKD_TSTSAN(nn.Module):
         AC1_x3 = self.relu(self.AC1_bn1_T(AC1_x3))
         AC1_x3 = self.AC1_conv2_T(AC1_x3)
         AC1_x3 = self.relu(self.AC1_bn2_T(AC1_x3))
-        AC1_x3 = self.AC1_pool(AC1_x3).view(bsz, 2, -1).mean(1)
+        AC1_x3 = self.AC1_pool(AC1_x3).reshape(bsz, 2, -1).mean(1)
 
         # ===== middle =====
         x3 = self.temp_diff(x3, 2)
@@ -208,7 +208,7 @@ class SKD_TSTSAN(nn.Module):
         x3 = self.conv5_T(x3)
         x3 = self.relu(self.bn5_T(x3))
 
-        x3 = self.all_avgpool(x3).view(bsz, 2, -1).mean(1)
+        x3 = self.all_avgpool(x3).reshape(bsz, 2, -1).mean(1)
 
         # 简化（重点放T分支）
         out = self.fc2(torch.cat([x3, x3, x3], dim=1))
