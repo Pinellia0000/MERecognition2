@@ -250,7 +250,7 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
     # 得取全名
     dataset_name = os.path.basename(config.main_path)  # "CASME2_retinaface_loso_5"
     print("数据集名称:")
-    print("test")
+    # print("test")
     print(dataset_name)
 
     if config.loss_function == "FocalLoss_weighted":
@@ -279,14 +279,14 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
         loss_fn = get_loss_function(config.loss_function)
 
     if (config.train):
-        if not path.exists('/root/autodl-tmp/working/Experiment_for_recognize/' + config.exp_name):
-            os.makedirs('/root/autodl-tmp/working/Experiment_for_recognize/' + config.exp_name)
+        if not path.exists('/kaggle/working/Experiment_for_recognize/' + config.exp_name):
+            os.makedirs('/kaggle/working/Experiment_for_recognize/' + config.exp_name)
 
     current_file = os.path.abspath(__file__)
-    shutil.copy(current_file, '/root/autodl-tmp/working/Experiment_for_recognize/' + config.exp_name)
-    shutil.copy(all_model_path, '/root/autodl-tmp/working/Experiment_for_recognize/' + config.exp_name)
+    shutil.copy(current_file, '/kaggle/working/Experiment_for_recognize/' + config.exp_name)
+    shutil.copy(all_model_path, '/kaggle/working/Experiment_for_recognize/' + config.exp_name)
 
-    log_file_path = '/root/autodl-tmp/working/Experiment_for_recognize/' + config.exp_name + "/logs.txt"
+    log_file_path = '/kaggle/working/Experiment_for_recognize/' + config.exp_name + "/logs.txt"
     sys.stdout = Logger(log_file_path)
 
     total_gt = []
@@ -441,8 +441,8 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                 end_input = np.stack(end_input, axis=-1)
                 X_test.append(end_input)
 
-        weight_path = '/root/autodl-tmp/working/Experiment_for_recognize/' + config.exp_name + '/' + n_subName + '/' + n_subName + '.pth'
-        log_path = '/root/autodl-tmp/working/Experiment_for_recognize/' + config.exp_name + '/' + n_subName + '/' + "logs"
+        weight_path = '/kaggle/working/Experiment_for_recognize/' + config.exp_name + '/' + n_subName + '/' + n_subName + '.pth'
+        log_path = '/kaggle/working/Experiment_for_recognize/' + config.exp_name + '/' + n_subName + '/' + "logs"
 
         writer = SummaryWriter(log_path)
 
