@@ -116,7 +116,7 @@ class TemporalTransformer(nn.Module):
 
 
 # =========================
-# Cross Branch Fusion（已适配）
+# Cross Branch Fusion
 # =========================
 class CrossBranchFusion(nn.Module):
     def __init__(self, c=64):
@@ -177,7 +177,10 @@ class SKD_TSTSAN_v2(nn.Module):
         self.Aug_Manipulator_T = SimpleManipulator()
 
         self.n_segment = n_segment
+
+        # ✅ 修复：兼容训练代码
         self.amp = amp_factor
+        self.amp_factor = amp_factor
 
         self.stem = nn.Conv2d(32,64,3,padding=1)
 
@@ -205,7 +208,7 @@ class SKD_TSTSAN_v2(nn.Module):
         x3 = input[:,34:]
         b,c,h,w = x3.shape
 
-        # 👉 reshape（安全）
+        # reshape安全处理
         x3 = x3.reshape(b*self.n_segment,2,h,w)
         x3_onset = torch.zeros_like(x3)
 
@@ -229,7 +232,7 @@ class SKD_TSTSAN_v2(nn.Module):
         x2 = self.layer1(x2)
         x3 = self.temporal_shift(x3)
 
-        # 🔥🔥🔥 核心修复（对齐维度）
+        # ✅ 关键修复：x3 对齐 batch
         bt, c, h, w = x3.shape
         b = bt // self.n_segment
         x3 = x3.reshape(b, self.n_segment, c, h, w).mean(1)
@@ -241,10 +244,8 @@ class SKD_TSTSAN_v2(nn.Module):
         x2 = self.layer2(x2)
         x3 = self.layer2(x3)
 
-        # temporal feature
-        # （注意：这里用的是 layer2 前的 temporal信息已经融合进去了）
+        # 特征
         x3_feat = self.pool(x3).flatten(1)
-
         x1 = self.pool(x1).flatten(1)
         x2 = self.pool(x2).flatten(1)
 
