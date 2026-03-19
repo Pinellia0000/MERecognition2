@@ -5,6 +5,16 @@ import math
 # =========================
 # Motion Magnification
 # =========================
+def gen_state_dict(weights_path):
+    """
+    train_classify_SKD_TSTSAN_functions_5.py 需要用到
+    """
+    st = torch.load(weights_path, map_location='cpu')
+    state_dict = {}
+    for k, v in st.items():
+        state_dict[k.replace('module.', '')] = v
+    return state_dict
+
 class SimpleEncoder(nn.Module):
     def __init__(self, dim_in):
         super().__init__()
