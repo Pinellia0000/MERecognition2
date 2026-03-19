@@ -18,7 +18,7 @@ from tqdm import tqdm
 # 注意修改
 from model.all_model_7 import *
 
-all_model_path = "/root/autodl-tmp/MERecognition/model/all_model_7.py"
+all_model_path = "/kaggle/working/MERecognition2/model/all_model_7.py"
 """
 在fuctions_4的基础上
 给在for n_subName in subName:和for epoch in range(1, epochs + 1): 加上进度条
