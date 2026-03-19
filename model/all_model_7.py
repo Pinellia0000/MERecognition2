@@ -24,19 +24,20 @@ class SimpleManipulator(nn.Module):
 
 
 # =========================
-# Temporal Difference（微表情关键）
+# Temporal Difference
 # =========================
 class TemporalDifference(nn.Module):
     def forward(self, x, n_segment):
         bt, c, h, w = x.size()
         b = bt // n_segment
-        x = x.view(b, n_segment, c, h, w)
+
+        x = x.reshape(b, n_segment, c, h, w)
 
         diff = x[:, 1:] - x[:, :-1]
         pad = torch.zeros_like(diff[:, :1])
         diff = torch.cat([pad, diff], dim=1)
 
-        return (x + diff).view(bt, c, h, w)
+        return (x + diff).reshape(bt, c, h, w)
 
 
 # =========================
@@ -52,7 +53,8 @@ class TemporalShift(nn.Module):
     def forward(self, x):
         nt, c, h, w = x.size()
         n_batch = nt // self.n_segment
-        x = x.view(n_batch, self.n_segment, c, h, w)
+
+        x = x.reshape(n_batch, self.n_segment, c, h, w)
 
         fold = max(1, c // self.fold_div)
         out = x.clone()
@@ -60,7 +62,7 @@ class TemporalShift(nn.Module):
         out[:, :-1, :fold] = x[:, 1:, :fold]
         out[:, 1:, fold:2*fold] = x[:, :-1, fold:2*fold]
 
-        return self.net(out.view(nt, c, h, w))
+        return self.net(out.reshape(nt, c, h, w))
 
 
 # =========================
@@ -92,7 +94,7 @@ class SA(nn.Module):
 
 
 # =========================
-# Temporal Transformer（🔥核心升级）
+# Temporal Transformer
 # =========================
 class TemporalTransformer(nn.Module):
     def __init__(self, dim, num_heads=4):
@@ -104,7 +106,7 @@ class TemporalTransformer(nn.Module):
         bt, c, h, w = x.size()
         b = bt // n_segment
 
-        x = x.view(b, n_segment, c, h, w)
+        x = x.reshape(b, n_segment, c, h, w)
         x = x.mean((3,4))  # [B,T,C]
 
         out, _ = self.attn(x, x, x)
@@ -160,7 +162,7 @@ class Block(nn.Module):
 
 
 # =========================
-# 主模型（接口完全不变）
+# 主模型
 # =========================
 class SKD_TSTSAN_v2(nn.Module):
     def __init__(self, num_classes=5, amp_factor=5, n_segment=2):
@@ -203,7 +205,7 @@ class SKD_TSTSAN_v2(nn.Module):
         x3 = input[:,34:]
         b,c,h,w = x3.shape
 
-        x3 = x3.view(b*self.n_segment,2,h,w)
+        x3 = x3.reshape(b*self.n_segment,2,h,w)
         x3_onset = torch.zeros_like(x3)
 
         # motion
@@ -244,7 +246,7 @@ class SKD_TSTSAN_v2(nn.Module):
 
 
 # =========================
-# 工厂函数（保持不变）
+# 工厂函数
 # =========================
 def get_model(model_name, class_num, alpha, n_segment=2):
     if model_name in ["SKD_TSTSAN", "SKD_TSTSAN_v2"]:
