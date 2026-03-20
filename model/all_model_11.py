@@ -71,7 +71,7 @@ class SKD_TSTSAN(nn.Module):
     def __init__(self, num_classes=5, amp_factor=5):
         super().__init__()
 
-        self.amp = amp_factor
+        self.amp_factor = amp_factor
 
         # Motion Magnification
         self.enc_L = MagEncoder_No_texture(16)
@@ -142,9 +142,12 @@ class SKD_TSTSAN(nn.Module):
         x3_on = torch.zeros_like(x3)
 
         # ===== motion =====
-        x1 = self.man_L(self.enc_L(x1_on), self.enc_L(x1), self.amp)
-        x2 = self.man_S(self.enc_S(x2_on), self.enc_S(x2), self.amp)
-        x3 = self.man_T(self.enc_T(x3_on), self.enc_T(x3), self.amp)
+        # x1 = self.man_L(self.enc_L(x1_on), self.enc_L(x1), self.amp)
+        # x2 = self.man_S(self.enc_S(x2_on), self.enc_S(x2), self.amp)
+        # x3 = self.man_T(self.enc_T(x3_on), self.enc_T(x3), self.amp)
+        x1 = self.man_L(self.enc_L(x1_on), self.enc_L(x1), self.amp_factor)
+        x2 = self.man_S(self.enc_S(x2_on), self.enc_S(x2), self.amp_factor)
+        x3 = self.man_T(self.enc_T(x3_on), self.enc_T(x3), self.amp_factor)
 
         # ===== shallow =====
         x1 = self.pool(self.relu(self.bn1_L(self.conv1_L(x1))))
