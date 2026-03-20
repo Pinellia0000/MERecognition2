@@ -1,6 +1,6 @@
 import argparse
 from distutils.util import strtobool
-from train.train_classify_SKD_TSTSAN_functions_5 import main_SKD_TSTSAN_with_Aug_with_SKD
+from train.train_classify_SKD_TSTSAN_functions_6 import main_SKD_TSTSAN_with_Aug_with_SKD
 
 
 if __name__ == '__main__':

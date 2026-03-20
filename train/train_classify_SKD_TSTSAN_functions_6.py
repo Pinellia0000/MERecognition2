@@ -16,15 +16,27 @@ import sys
 import ast
 from tqdm import tqdm
 # 注意修改
-from model.all_model_10 import *
+from model.all_model_11 import *
 
-all_model_path = "/kaggle/working/MERecognition2/model/all_model_10.py"
+all_model_path = "/kaggle/working/MERecognition2/model/all_model_11.py"
 """
 在fuctions_4的基础上
 给在for n_subName in subName:和for epoch in range(1, epochs + 1): 加上进度条
 """
 # print("DEBUG: ENTER main_SKD_TSTSAN_with_Aug_with_SKD")
 # print("__file__ =", __file__)
+
+
+# =========================
+# Prototype Loss
+# =========================
+def prototype_loss(features, labels, prototypes, T=0.07):
+    feat = F.normalize(features, dim=1)
+    proto = F.normalize(prototypes, dim=1)
+
+    logits = torch.matmul(feat, proto.T) / T
+    return F.cross_entropy(logits, labels)
+
 
 def reset_weights(m):  # Reset the weights for network to avoid weight leakage
     for layer in m.children():
@@ -528,6 +540,7 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                 L2_loss1 = 0.0
                 L2_loss2 = 0.0
                 loss_sum = 0.0
+                proto_loss_sum = 0.0
 
                 num_train_correct = 0
                 num_train_examples = 0
@@ -540,9 +553,12 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                     x = batch[0].to(device)
                     y = batch[1].to(device)
                     yhat, AC1_out, AC2_out, final_feature, AC1_feature, AC2_feature = model(x)
+                    # ⭐ Prototype Loss（新增）
+                    loss_proto = prototype_loss(final_feature, y, model.prototypes)
                     loss = loss_fn(yhat, y)
                     AC1_loss = loss_fn(AC1_out, y)
                     AC2_loss = loss_fn(AC2_out, y)
+                    #
                     temperature = config.temperature
                     temp4 = yhat / temperature
                     temp4 = torch.softmax(temp4, dim=1)
@@ -551,13 +567,20 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                     feature_loss_1 = feature_loss_function(AC1_feature, final_feature.detach())
                     feature_loss_2 = feature_loss_function(AC2_feature, final_feature.detach())
 
+                    # total_losses = loss + (1 - config.alpha) * (AC1_loss + AC2_loss) + \
+                    #                config.alpha * (loss1by4 + loss2by4) + \
+                    #                config.beta * (feature_loss_1 + feature_loss_2)
+                    # ⭐ 新增权重 lambda_proto（建议0.3~0.5）
+                    lambda_proto = config.lambda_proto if hasattr(config, "lambda_proto") else 0.5
+
                     total_losses = loss + (1 - config.alpha) * (AC1_loss + AC2_loss) + \
                                    config.alpha * (loss1by4 + loss2by4) + \
-                                   config.beta * (feature_loss_1 + feature_loss_2)
-
+                                   config.beta * (feature_loss_1 + feature_loss_2) + \
+                                   lambda_proto * loss_proto  # ⭐ 加在这里
                     total_losses.backward()
                     optimizer.step()
 
+                    proto_loss_sum += loss_proto.item() * x.size(0)
                     train_ce_loss += loss.data.item() * x.size(0)
                     middle_loss1 += AC1_loss.data.item() * x.size(0)
                     middle_loss2 += AC2_loss.data.item() * x.size(0)
@@ -591,6 +614,7 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                 L2_loss1 = L2_loss1 / len(train_dl.dataset)
                 L2_loss2 = L2_loss2 / len(train_dl.dataset)
                 loss_sum = loss_sum / len(train_dl.dataset)
+                proto_loss_sum = proto_loss_sum / len(train_dl.dataset)
 
                 writer.add_scalar("Train_Acc", train_acc, epoch)
                 writer.add_scalar("Middle1_Train_Acc", middle1_acc, epoch)
@@ -602,6 +626,7 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                 writer.add_scalar("KL_loss2", KL_loss2, epoch)
                 writer.add_scalar("L2_loss1", L2_loss1, epoch)
                 writer.add_scalar("L2_loss2", L2_loss2, epoch)
+                writer.add_scalar("proto_loss", proto_loss_sum, epoch)
                 writer.add_scalar("loss_sum", loss_sum, epoch)
 
                 writer.add_scalar("Aug Factor", model.amp_factor, epoch)
