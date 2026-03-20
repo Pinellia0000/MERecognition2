@@ -31,6 +31,10 @@ all_model_path = "/kaggle/working/MERecognition2/model/all_model_11.py"
 # Prototype Loss
 # =========================
 def prototype_loss(features, labels, prototypes, T=0.07):
+    """
+    T 可以调整
+    在论文中可以写实验
+    """
     feat = F.normalize(features, dim=1)
     proto = F.normalize(prototypes, dim=1)
 
@@ -571,6 +575,12 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                     #                config.alpha * (loss1by4 + loss2by4) + \
                     #                config.beta * (feature_loss_1 + feature_loss_2)
                     # ⭐ 新增权重 lambda_proto（建议0.3~0.5）
+                    """
+                    lambda_proto 也可以调整
+                    论文中可以写
+                    0.1 ~ 0.3 更稳 
+                    否则 prototype loss 会压制分类loss
+                    """
                     lambda_proto = config.lambda_proto if hasattr(config, "lambda_proto") else 0.5
 
                     total_losses = loss + (1 - config.alpha) * (AC1_loss + AC2_loss) + \
