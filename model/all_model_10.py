@@ -25,16 +25,27 @@ class BranchAttention(nn.Module):
             nn.Linear(dim * 3, dim // reduction),
             nn.ReLU(),
             nn.Linear(dim // reduction, 3),
-            nn.Softmax(dim=1)
+            nn.Sigmoid()
         )
 
     def forward(self, x1, x2, x3):
         x = torch.cat([x1, x2, x3], dim=1)
         w = self.fc(x)
+
         w1 = w[:, 0].unsqueeze(1)
         w2 = w[:, 1].unsqueeze(1)
         w3 = w[:, 2].unsqueeze(1)
+
+        w_sum = w1 + w2 + w3 + 1e-6
+        w1, w2, w3 = w1 / w_sum, w2 / w_sum, w3 / w_sum
+
         return torch.cat([x1 * w1, x2 * w2, x3 * w3], dim=1)
+
+def channel_shuffle(x, groups=3):
+    B, C = x.size()
+    x = x.reshape(B, groups, C // groups)
+    x = x.transpose(1, 2).contiguous()
+    return x.reshape(B, C)
 
 class ConsensusModule(torch.nn.Module):
 
@@ -262,8 +273,9 @@ class SKD_TSTSAN(nn.Module):
         # 修改
         x3_onset = self.Aug_Manipulator_T(motion_x3_onset, motion_x3_onset, self.amp_factor)
         x3 = self.Aug_Manipulator_T(motion_x3_onset, motion_x3, self.amp_factor)
-        # ⭐ Temporal Difference（论文创新点）
-        x3 = x3 + 0.5 * (x3 - x3_onset)
+        # ⭐ Temporal Difference（稳定版）
+        delta = x3 - x3_onset
+        x3 = x3 + 0.1 * delta
 
         x1 = self.conv1_L(x1)
         x1 = self.bn1_L(x1)
@@ -415,13 +427,24 @@ class SKD_TSTSAN(nn.Module):
         x3_all = self.consensus(x3_all)
         x3_all = x3_all.squeeze(1)
 
-        # ⭐ Feature Normalize（稳定训练）
-        x1_all = F.normalize(x1_all, dim=1)
-        x2_all = F.normalize(x2_all, dim=1)
-        x3_all = F.normalize(x3_all, dim=1)
+        def safe_norm(x):
+            return x / (x.norm(dim=1, keepdim=True) + 1e-6)
 
-        # ⭐ Branch Attention（核心创新）
-        final_feature = self.branch_att(x1_all, x2_all, x3_all)
+        x1_all = safe_norm(x1_all)
+        x2_all = safe_norm(x2_all)
+        x3_all = safe_norm(x3_all)
+
+        # == == = 原始特征（保留） == == =
+        base_feature = torch.cat((x1_all, x2_all, x3_all), 1)
+
+        # ===== Branch Attention（增强）=====
+        att_feature = self.branch_att(x1_all, x2_all, x3_all)
+
+        # ===== Residual 融合（关键）=====
+        final_feature = base_feature + 0.3 * att_feature
+
+        # ===== Channel Shuffle（新增）=====
+        final_feature = channel_shuffle(final_feature)
         x_all = self.dropout(final_feature)
         x_all = self.fc2(x_all)
         return x_all, AC1_x_all, AC2_x_all, final_feature, AC1_feature, AC2_feature
