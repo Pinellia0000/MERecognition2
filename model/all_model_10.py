@@ -259,6 +259,8 @@ class SKD_TSTSAN(nn.Module):
         x2 = self.Aug_Manipulator_S(motion_x2_onset, motion_x2, self.amp_factor)
         motion_x3_onset = self.Aug_Encoder_T(x3_onset)
         motion_x3 = self.Aug_Encoder_T(x3)
+        # 修改
+        x3_onset = self.Aug_Manipulator_T(motion_x3_onset, motion_x3_onset, self.amp_factor)
         x3 = self.Aug_Manipulator_T(motion_x3_onset, motion_x3, self.amp_factor)
         # ⭐ Temporal Difference（论文创新点）
         x3 = x3 + 0.5 * (x3 - x3_onset)
