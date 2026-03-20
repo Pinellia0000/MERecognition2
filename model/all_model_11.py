@@ -137,7 +137,7 @@ class SKD_TSTSAN(nn.Module):
         x3 = input[:, 34:]
         b = x1.size(0)
 
-        x3 = x3.view(b*2, 2, 48, 48)
+        x3 = x3.reshape(b*2, 2, 48, 48)
         x3_on = torch.zeros_like(x3)
 
         # ===== motion =====
@@ -162,10 +162,10 @@ class SKD_TSTSAN(nn.Module):
         x2 = self.global_pool(self.relu(self.bn5(self.conv5(self.relu(self.bn4(self.conv4(x2)))))))
         x3 = self.global_pool(self.relu(self.bn5(self.conv5(self.relu(self.bn4(self.conv4(x3)))))))
 
-        x1 = x1.view(b, -1)  # (B,128)
-        x2 = x2.view(b, -1)
+        x1 = x1.reshape(b, -1)  # (B,128)
+        x2 = x2.reshape(b, -1)
 
-        x3 = x3.view(b, 2, -1)
+        x3 = x3.reshape(b, 2, -1)
         x3 = self.temporal_attn(x3)
         x3 = x3.mean(dim=1)
 
