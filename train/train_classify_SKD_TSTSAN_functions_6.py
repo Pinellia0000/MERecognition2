@@ -556,7 +556,8 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                     optimizer.zero_grad()
                     x = batch[0].to(device)
                     y = batch[1].to(device)
-                    yhat, AC1_out, AC2_out, final_feature, AC1_feature, AC2_feature = model(x)
+                    # yhat, AC1_out, AC2_out, final_feature, AC1_feature, AC2_feature = model(x)
+                    yhat, AC1_out, AC2_out, final_feature, final_feature_proj, AC1_feature, AC2_feature = model(x)
                     # ⭐ Prototype Loss（新增）
                     loss_proto = prototype_loss(final_feature, y, model.prototypes)
                     loss = loss_fn(yhat, y)
@@ -568,8 +569,10 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                     temp4 = torch.softmax(temp4, dim=1)
                     loss1by4 = new_kd_loss_function(AC1_out, temp4.detach(), temperature) * (temperature ** 2)
                     loss2by4 = new_kd_loss_function(AC2_out, temp4.detach(), temperature) * (temperature ** 2)
-                    feature_loss_1 = feature_loss_function(AC1_feature, final_feature.detach())
-                    feature_loss_2 = feature_loss_function(AC2_feature, final_feature.detach())
+                    # feature_loss_1 = feature_loss_function(AC1_feature, final_feature.detach())
+                    # feature_loss_2 = feature_loss_function(AC2_feature, final_feature.detach())
+                    feature_loss_1 = feature_loss_function(AC1_feature, final_feature_proj.detach())
+                    feature_loss_2 = feature_loss_function(AC2_feature, final_feature_proj.detach())
 
                     # total_losses = loss + (1 - config.alpha) * (AC1_loss + AC2_loss) + \
                     #                config.alpha * (loss1by4 + loss2by4) + \
@@ -653,7 +656,8 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
             for batch in test_dl:
                 x = batch[0].to(device)
                 y = batch[1].to(device)
-                yhat, AC1_out, AC2_out, final_feature, AC1_feature, AC2_feature = model(x)
+                # yhat, AC1_out, AC2_out, final_feature, AC1_feature, AC2_feature = model(x)
+                yhat, AC1_out, AC2_out, final_feature, final_feature_proj, AC1_feature, AC2_feature = model(x)
 
                 num_val_correct += (torch.max(yhat, 1)[1] == y).sum().item()
 

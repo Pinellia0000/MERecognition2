@@ -125,6 +125,7 @@ class SKD_TSTSAN(nn.Module):
 
         # ⭐ Prototype
         self.prototypes = nn.Parameter(torch.randn(num_classes, 128 * 3))
+        self.proj = nn.Linear(384, 128)
 
     def forward(self, input):
         # ===== split =====
@@ -174,6 +175,8 @@ class SKD_TSTSAN(nn.Module):
         final_feature = self.dropout(final_feature)
 
         yhat = self.fc(final_feature)
+        # ⭐ projection（用于 feature distill）
+        final_feature_proj = self.proj(final_feature)
 
         # ⭐ AC1 / AC2
         AC1_feature = x1
@@ -182,7 +185,9 @@ class SKD_TSTSAN(nn.Module):
         AC1_out = self.fc_ac1(AC1_feature)
         AC2_out = self.fc_ac2(AC2_feature)
 
-        return yhat, AC1_out, AC2_out, final_feature, AC1_feature, AC2_feature
+
+
+        return yhat, AC1_out, AC2_out, final_feature, final_feature_proj, AC1_feature, AC2_feature
 
 
 # =========================
