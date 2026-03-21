@@ -47,3 +47,4 @@ scikit-learn
 thop
 openpyxl
 opencv-contrib-python
+seaborn

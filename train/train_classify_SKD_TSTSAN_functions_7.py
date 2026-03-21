@@ -51,7 +51,7 @@ def plot_confusion_matrix(cm, class_names, dataset_name, save_dir):
 
     sns.heatmap(cm_norm, annot=True, fmt=".2f",
                 xticklabels=class_names,
-                yticklabels=class_names)
+                yticklabels=class_names, cmap='Blues')
 
     plt.xlabel("Predicted")
     plt.ylabel("True")
