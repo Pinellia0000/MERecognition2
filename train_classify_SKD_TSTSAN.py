@@ -24,6 +24,10 @@ if __name__ == '__main__':
     parser.add_argument('--alpha', default=0.1, type=float, help='weight of kd loss')
     parser.add_argument('--beta', default=1e-6, type=float, help='weight of feature loss')
 
+    # 新增
+    parser.add_argument('--lambda_proto', type=float, default=0.3, help='weight of prototype loss')
+    parser.add_argument('--proto_T', type=float, default=0.07, help='temperature for prototype loss')
+
     parser.add_argument('--Aug_alpha', type=float, default=2)
 
     config = parser.parse_args()

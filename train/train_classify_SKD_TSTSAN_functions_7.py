@@ -30,6 +30,7 @@ all_model_path = "/kaggle/working/MERecognition2/model/all_model_11.py"
 
 
 
+
 def plot_confusion_matrix(cm, class_names, dataset_name, save_dir):
     """
     绘制混淆矩阵
@@ -69,6 +70,10 @@ def prototype_loss(features, labels, prototypes, T=0.07):
     """
     T 可以调整
     在论文中可以写实验
+    Prototype Loss 是一个辅助约束，不宜权重大于主分类 loss
+    KD loss 和 feature loss 可以提升 AC 分支对 final_feature 的对齐
+    温度调节主要影响 soft target 的平滑度和学习难度
+    实验建议先从 lambda_proto 0.1~0.5、alpha 0.2~0.8、beta 0.1~0.5、temperature 2~6、T 0.05~0.2 开始
     """
     feat = F.normalize(features, dim=1)
     proto = F.normalize(prototypes, dim=1)
@@ -743,6 +748,21 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
 
     writer.close()
     print('Final Evaluation: ')
+    # 打印关键训练参数及其值
+    print("===== Training Configuration =====")
+    print(f"Learning Rate: {config.learning_rate}")
+    print(f"Batch Size: {config.batch_size}")
+    print(f"Max Iterations: {config.max_iter}")
+    print(f"Model: {config.model}")
+    print(f"Number of Classes: {config.class_num}")
+
+    # Loss / KD / Feature / Prototype 参数
+    print(f"Loss Function: {config.loss_function}")
+    print(f"Alpha (KD loss weight): {config.alpha}")
+    print(f"Beta (Feature loss weight): {config.beta}")
+    print(f"Lambda_proto (Prototype loss weight): {getattr(config, 'lambda_proto', 'N/A')}")
+    print(f"Prototype T (Temperature for prototype loss): {getattr(config, 'proto_T', 'N/A')}")
+    print(f"Temperature (KD softmax temperature): {config.temperature}")
     # 类别名（你代码里已有逻辑，直接复用）
     if dataset_name in ["CASME2_retinaface_loso_3", "SAMM_retinaface_loso_3", "CASME3_retinaface_loso_3"]:
         class_names = ["positive", "negative", "surprise"]
