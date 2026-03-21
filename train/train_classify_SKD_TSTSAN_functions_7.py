@@ -49,7 +49,7 @@ def plot_confusion_matrix(cm, class_names, dataset_name, save_dir):
     cm_sum[cm_sum == 0] = 1
     cm_norm = cm.astype('float') / cm_sum
 
-    sns.heatmap(cm_norm, annot=True, fmt=".2f",
+    sns.heatmap(cm_norm, annot=True, fmt=".4f",
                 xticklabels=class_names,
                 yticklabels=class_names, cmap='Blues')
 
