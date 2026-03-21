@@ -66,7 +66,7 @@ def plot_confusion_matrix(cm, class_names, dataset_name, save_dir):
 # =========================
 # Prototype Loss
 # =========================
-def prototype_loss(features, labels, prototypes, T=0.07):
+def prototype_loss(features, labels, prototypes, T):
     """
     T 可以调整
     在论文中可以写实验
@@ -599,7 +599,7 @@ def main_SKD_TSTSAN_with_Aug_with_SKD(config):
                     # yhat, AC1_out, AC2_out, final_feature, AC1_feature, AC2_feature = model(x)
                     yhat, AC1_out, AC2_out, final_feature, final_feature_proj, AC1_feature, AC2_feature = model(x)
                     # ⭐ Prototype Loss（新增）
-                    loss_proto = prototype_loss(final_feature, y, model.prototypes)
+                    loss_proto = prototype_loss(final_feature, y, model.prototypes, config.proto_T)
                     loss = loss_fn(yhat, y)
                     AC1_loss = loss_fn(AC1_out, y)
                     AC2_loss = loss_fn(AC2_out, y)
