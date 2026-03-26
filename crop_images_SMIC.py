@@ -18,8 +18,8 @@ def delete_directory(path):
 
 def zip_frames(packagePath, zipPath):
     if not os.path.exists(packagePath):
-        print(f"[错误] 打包目录不存在: {packagePath}")
-        return
+        os.makedirs(packagePath, exist_ok=True)
+
     if os.path.exists(zipPath):
         os.remove(zipPath)
     zip = zipfile.ZipFile(zipPath, 'w', zipfile.ZIP_DEFLATED)
@@ -35,11 +35,9 @@ def zip_frames(packagePath, zipPath):
 
 
 def print_directory_structure(root_dir, indent="", directory_name="", is_root=True):
-    # 新增：目录不存在时直接提示返回，避免报错
     if not os.path.exists(root_dir):
         print(f"[警告] 目录不存在，无法打印结构: {root_dir}")
         return
-    # 新增：空目录判断
     if len(os.listdir(root_dir)) == 0:
         print(f"{directory_name} 目录为空")
         return
@@ -66,7 +64,7 @@ def crop_images_retinaface(src_root_path, dst_root_path):
 
     for sub_folder_name in tqdm(subject_folders, desc="Processing subjects"):
         sub_folder_path = os.path.join(src_root_path, sub_folder_name)
-        image_paths = sorted(glob.glob(os.path.join(sub_folder_path, '*.jpg')))
+        image_paths = sorted(glob.glob(os.path.join(sub_folder_path, '*.bmp')))
         index = 0
         face_left = face_top = face_right = face_bottom = 0
 
@@ -105,25 +103,33 @@ def crop_images_retinaface(src_root_path, dst_root_path):
 def resize_only_images(src_root_path, dst_root_path):
     """
     SMIC专用：仅缩放 128x128，不做人脸检测
+    支持 BMP，输出保持 BMP 不变
     """
-    # 新增：检查源目录是否存在
     if not os.path.exists(src_root_path):
         print(f"[错误] 源目录不存在: {src_root_path}")
         return
 
+    # 强制创建目录
+    os.makedirs(dst_root_path, exist_ok=True)
+
     subject_folders = [f for f in os.listdir(src_root_path) if os.path.isdir(os.path.join(src_root_path, f))]
 
-    # 新增：无待处理文件夹时直接返回
     if not subject_folders:
-        print(f"[警告] 源目录下没有子文件夹: {src_root_path}")
+        print(f"[警告] 源目录下没有子文件夹")
         return
 
     for sub_folder_name in tqdm(subject_folders, desc="Processing SMIC subjects"):
         sub_folder_path = os.path.join(src_root_path, sub_folder_name)
-        image_paths = sorted(glob.glob(os.path.join(sub_folder_path, '*.jpg')))
+
+        # 只找 BMP
+        image_paths = sorted(glob.glob(os.path.join(sub_folder_path, '*.bmp')))
+
+        # 创建子目录
+        dst_sub_folder = os.path.join(dst_root_path, sub_folder_name)
+        os.makedirs(dst_sub_folder, exist_ok=True)
 
         if not image_paths:
-            print(f"[警告] {sub_folder_path} 下无 jpg 图片")
+            print(f"[警告] {sub_folder_path} 下无 bmp 图片")
             continue
 
         for img_file_path in tqdm(image_paths, desc=f"  {sub_folder_name}", leave=False):
@@ -143,21 +149,16 @@ def resize_only_images(src_root_path, dst_root_path):
             dst_folder = os.path.dirname(dst_img_path)
             os.makedirs(dst_folder, exist_ok=True)
 
+            # 直接保存 BMP，不转格式！
             cv2.imwrite(dst_img_path, resized_img)
 
     print("SMIC resize 128x128 done.")
 
 
 if __name__ == '__main__':
-    # ========== SMIC（仅缩放 128x128）==========
     smic_src = "/kaggle/working/SMIC_onset_apex_offset"
     smic_dst = "/kaggle/working/SMIC_onset_apex_offset_retinaface"
 
-    # 新增：先检查源目录
-    if os.path.exists(smic_src):
-        resize_only_images(smic_src, smic_dst)
-        zip_frames(smic_dst, '/kaggle/working/SMIC_onset_apex_offset_retinaface.zip')
-    else:
-        print(f"[错误] SMIC 源目录不存在: {smic_src}")
-
+    resize_only_images(smic_src, smic_dst)
+    zip_frames(smic_dst, '/kaggle/working/SMIC_onset_apex_offset_retinaface.zip')
     print_directory_structure(smic_dst, directory_name='SMIC')
