@@ -132,7 +132,7 @@ if __name__ == '__main__':
     SMIC_data_folder_3 = "/kaggle/working/SMIC_retinaface_3"
 
     # 分类
-    SMIC_3c(SMIC_onset_apex_offset_resize128, SMIC_optflow_retinaface, SMIC_data_folder_3)
+    SMIC_3c(SMIC_onset_apex_offset_retinaface, SMIC_optflow_retinaface, SMIC_data_folder_3)
 
     # 打包
     zipPath = '/kaggle/working/SMIC_retinaface_3.zip'
