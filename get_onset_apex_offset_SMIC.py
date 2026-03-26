@@ -126,7 +126,7 @@ if __name__ == "__main__":
     get_SMIC_onset_apex_offset_auto(SMIC_src_root, SMIC_dst_root)
     # 打包
     zipPath = '/kaggle/working/SMIC_onset_apex_offset.zip'
-    zip_frames(casme3_dst_root, zipPath)
+    zip_frames(SMIC_dst_root, zipPath)
     # 输出关键帧结构
     print("CASME3关键帧目录结构如下：\n")
     print_directory_structure(SMIC_dst_root, directory_name="SMIC_onset_apex_offset")
