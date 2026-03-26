@@ -91,6 +91,8 @@ def crop_images_retinaface(src_root_path, dst_root_path):
 
             relative_path = os.path.relpath(img_file_path, src_root_path)
             dst_img_path = os.path.join(dst_root_path, relative_path)
+            # 转换成 JPG
+            dst_img_path = os.path.splitext(dst_img_path)[0] + ".jpg"
             dst_folder = os.path.dirname(dst_img_path)
             os.makedirs(dst_folder, exist_ok=True)
 
@@ -103,7 +105,7 @@ def crop_images_retinaface(src_root_path, dst_root_path):
 def resize_only_images(src_root_path, dst_root_path):
     """
     SMIC专用：仅缩放 128x128，不做人脸检测
-    支持 BMP，输出保持 BMP 不变
+    输入 BMP → 输出 JPG
     """
     if not os.path.exists(src_root_path):
         print(f"[错误] 源目录不存在: {src_root_path}")
@@ -146,10 +148,12 @@ def resize_only_images(src_root_path, dst_root_path):
 
             relative_path = os.path.relpath(img_file_path, src_root_path)
             dst_img_path = os.path.join(dst_root_path, relative_path)
+            # ✅ 这里改成输出 .jpg
+            dst_img_path = os.path.splitext(dst_img_path)[0] + ".jpg"
             dst_folder = os.path.dirname(dst_img_path)
             os.makedirs(dst_folder, exist_ok=True)
 
-            # 直接保存 BMP，不转格式！
+            # 保存成 JPG
             cv2.imwrite(dst_img_path, resized_img)
 
     print("SMIC resize 128x128 done.")
