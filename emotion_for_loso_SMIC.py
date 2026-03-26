@@ -65,55 +65,59 @@ def SMIC_3c(SMIC_onset_apex_offset_resize128, SMIC_optflow_retinaface, data_fold
         positive → 0
         negative → 1
         surprise → 2
-
-    结构：
-    SMIC_onset_apex_offset_resize128/
-        positive/
-            ...jpg
-        negative/
-            ...jpg
-        surprise/
-            ...jpg
     """
 
-    # SMIC 3分类标签（直接对应文件夹名）
+    # SMIC 3分类标签
     label_dict_3 = {
         'positive': 0,
         'negative': 1,
         'surprise': 2
     }
 
-    # 创建输出目录 0,1,2
+    # 创建输出目录
     for label in sorted(set(label_dict_3.values())):
         os.makedirs(os.path.join(data_folder_3, str(label)), exist_ok=True)
 
-    # 遍历 3 个标签文件夹
+    # 遍历处理每个类别
     for label_name in ['positive', 'negative', 'surprise']:
         label_id = label_dict_3[label_name]
-        print(f"→ 处理 SMIC 类别：{label_name} -> {label_id}")
+        target_dir = os.path.join(data_folder_3, str(label_id))
+        count = 0
 
-        # 关键帧路径
+        print(f"\n→ 处理 SMIC 类别：{label_name} -> {label_id}")
+
+        # -------------------------- 关键修复：遍历所有子目录复制图片 --------------------------
+        # 处理关键帧
         key_frame_folder = os.path.join(SMIC_onset_apex_offset_resize128, label_name)
-        # 光流路径
-        optflow_folder = os.path.join(SMIC_optflow_retinaface, label_name)
-
-        # 复制关键帧
         if os.path.exists(key_frame_folder):
-            for img_name in tqdm(os.listdir(key_frame_folder), desc=f"{label_name} 关键帧"):
-                src = os.path.join(key_frame_folder, img_name)
-                dst = os.path.join(data_folder_3, str(label_id), img_name)
-                if not os.path.exists(dst):
-                    shutil.copy(src, dst)
+            print(f"  关键帧路径：{key_frame_folder}")
+            for root, dirs, files in os.walk(key_frame_folder):
+                for img_name in tqdm(files, desc=f"{label_name} 关键帧"):
+                    if img_name.lower().endswith(('.jpg', '.png', '.jpeg')):
+                        src = os.path.join(root, img_name)
+                        dst = os.path.join(target_dir, img_name)
+                        shutil.copy(src, dst)
+                        count += 1
+        else:
+            print(f"  ⚠️  关键帧路径不存在：{key_frame_folder}")
 
-        # 复制光流帧
+        # 处理光流帧
+        optflow_folder = os.path.join(SMIC_optflow_retinaface, label_name)
         if os.path.exists(optflow_folder):
-            for img_name in tqdm(os.listdir(optflow_folder), desc=f"{label_name} 光流帧"):
-                src = os.path.join(optflow_folder, img_name)
-                dst = os.path.join(data_folder_3, str(label_id), img_name)
-                if not os.path.exists(dst):
-                    shutil.copy(src, dst)
+            print(f"  光流路径：{optflow_folder}")
+            for root, dirs, files in os.walk(optflow_folder):
+                for img_name in tqdm(files, desc=f"{label_name} 光流帧"):
+                    if img_name.lower().endswith(('.jpg', '.png', '.jpeg')):
+                        src = os.path.join(root, img_name)
+                        dst = os.path.join(target_dir, img_name)
+                        shutil.copy(src, dst)
+                        count += 1
+        else:
+            print(f"  ⚠️  光流路径不存在：{optflow_folder}")
 
-    print("SMIC 3分类整理完成！")
+        print(f"  ✅ 该类别总计复制图片：{count} 张")
+
+    print("\n🎉 SMIC 3分类整理完成！")
 
 
 def delete_main_1():
