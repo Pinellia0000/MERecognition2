@@ -120,13 +120,13 @@ def SMIC_3c(SMIC_onset_apex_offset_resize128, SMIC_optflow_retinaface, data_fold
     print("\n🎉 SMIC 3分类整理完成！")
 
 
-def delete_main_1():
-    casme2_dst_root = '/kaggle/working/CASME2_onset_apex_offset'
-    samm_dst_root = '/kaggle/working/SAMM_onset_apex_offset'
-    casme3_dst_root = '/kaggle/working/CASME3_onset_apex_offset'
-    delete_directory(casme2_dst_root)
-    delete_directory(samm_dst_root)
-    delete_directory(casme3_dst_root)
+# def delete_main_1():
+#     casme2_dst_root = '/kaggle/working/CASME2_onset_apex_offset'
+#     samm_dst_root = '/kaggle/working/SAMM_onset_apex_offset'
+#     casme3_dst_root = '/kaggle/working/CASME3_onset_apex_offset'
+#     delete_directory(casme2_dst_root)
+#     delete_directory(samm_dst_root)
+#     delete_directory(casme3_dst_root)
 
 
 if __name__ == '__main__':

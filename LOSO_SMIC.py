@@ -221,7 +221,7 @@ def delete_main_2():
 
 
 if __name__ == "__main__":
-    delete_main_2()
+    # delete_main_2()
 
     # ===================== SMIC LOSO 3分类 =====================
     print("=== 开始处理 SMIC LOSO ===")
@@ -234,5 +234,5 @@ if __name__ == "__main__":
     zip_frames(loso_folder_3, f'{loso_folder_3}.zip')
     print_directory_structure(loso_folder_3, directory_name='SMIC_retinaface_loso_3')
 
-    delete_directory(data_folder_3)
-    delete_directory(loso_folder_3)
+    # delete_directory(data_folder_3)
+    # delete_directory(loso_folder_3)
