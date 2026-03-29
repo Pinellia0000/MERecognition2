@@ -58,84 +58,89 @@ def print_directory_structure(root_dir, indent="", directory_name="", is_root=Tr
             print_directory_structure(path, indent + extension, directory_name, is_root=False)
 
 
-def SMIC_3c(SMIC_onset_apex_offset_resize128, SMIC_optflow_retinaface, data_folder_3):
+def SMIC_3c(SMIC_onset_apex_offset_retinaface, SMIC_optflow_retinaface, data_folder_3):
     """
-    SMIC 数据集 没有标注文件，直接按文件夹名分类
-    文件夹名就是标签：
-        positive → 0
-        negative → 1
-        surprise → 2
+    SMIC 数据集 无标注文件 → 根据文件名判断分类
+    命名规则：
+        po  → positive 积极 → 0
+        ne  → negative 消极 → 1
+        sur → surprise 惊讶 → 2
+    同时处理：关键帧(onset/apex/offset) + 光流帧(u/v)
     """
 
-    # SMIC 3分类标签
+    # 3分类标签
     label_dict_3 = {
-        'positive': 0,
-        'negative': 1,
-        'surprise': 2
+        'po': 0,
+        'ne': 1,
+        'sur': 2
     }
 
-    # 创建输出目录
+    # 创建输出目录 0,1,2
     for label in sorted(set(label_dict_3.values())):
         os.makedirs(os.path.join(data_folder_3, str(label)), exist_ok=True)
 
-    # 遍历处理每个类别
-    for label_name in ['positive', 'negative', 'surprise']:
-        label_id = label_dict_3[label_name]
-        target_dir = os.path.join(data_folder_3, str(label_id))
-        count = 0
+    total_count = {'0': 0, '1': 0, '2': 0}
 
-        print(f"\n→ 处理 SMIC 类别：{label_name} -> {label_id}")
+    # -------------------------- 统一处理函数：遍历所有图片，按文件名分类 --------------------------
+    def process_folder(src_root):
+        """遍历目录下所有图片，根据文件名前缀分配到对应标签文件夹"""
+        if not os.path.exists(src_root):
+            print(f"⚠️  路径不存在: {src_root}")
+            return
 
-        # -------------------------- 关键修复：遍历所有子目录复制图片 --------------------------
-        # 处理关键帧
-        key_frame_folder = os.path.join(SMIC_onset_apex_offset_resize128, label_name)
-        if os.path.exists(key_frame_folder):
-            print(f"  关键帧路径：{key_frame_folder}")
-            for root, dirs, files in os.walk(key_frame_folder):
-                for img_name in tqdm(files, desc=f"{label_name} 关键帧"):
-                    if img_name.lower().endswith(('.jpg', '.png', '.jpeg')):
-                        src = os.path.join(root, img_name)
-                        dst = os.path.join(target_dir, img_name)
-                        shutil.copy(src, dst)
-                        count += 1
-        else:
-            print(f"  ⚠️  关键帧路径不存在：{key_frame_folder}")
+        # 递归遍历所有子目录
+        for root, dirs, files in os.walk(src_root):
+            for img_name in tqdm(files, desc=f"处理 {os.path.basename(src_root)}"):
+                # 只处理图片
+                if not img_name.lower().endswith(('.jpg', '.png', '.jpeg')):
+                    continue
 
-        # 处理光流帧
-        optflow_folder = os.path.join(SMIC_optflow_retinaface, label_name)
-        if os.path.exists(optflow_folder):
-            print(f"  光流路径：{optflow_folder}")
-            for root, dirs, files in os.walk(optflow_folder):
-                for img_name in tqdm(files, desc=f"{label_name} 光流帧"):
-                    if img_name.lower().endswith(('.jpg', '.png', '.jpeg')):
-                        src = os.path.join(root, img_name)
-                        dst = os.path.join(target_dir, img_name)
-                        shutil.copy(src, dst)
-                        count += 1
-        else:
-            print(f"  ⚠️  光流路径不存在：{optflow_folder}")
+                # ========== 核心：根据文件名前缀判断情绪 ==========
+                img_lower = img_name.lower()
+                label_id = None
 
-        print(f"  ✅ 该类别总计复制图片：{count} 张")
+                if 'po' in img_lower:
+                    label_id = 0
+                elif 'ne' in img_lower:
+                    label_id = 1
+                elif 'sur' in img_lower:
+                    label_id = 2
+                else:
+                    # 不匹配的文件跳过
+                    continue
 
+                # 复制到对应标签目录
+                target_dir = os.path.join(data_folder_3, str(label_id))
+                src_path = os.path.join(root, img_name)
+                dst_path = os.path.join(target_dir, img_name)
+
+                if not os.path.exists(dst_path):
+                    shutil.copy(src_path, dst_path)
+                    total_count[str(label_id)] += 1
+
+    # 处理 关键帧
+    print("\n📌 开始处理 SMIC 关键帧...")
+    process_folder(SMIC_onset_apex_offset_retinaface)
+
+    # 处理 光流帧
+    print("\n📌 开始处理 SMIC 光流帧...")
+    process_folder(SMIC_optflow_retinaface)
+
+    # 输出统计
     print("\n🎉 SMIC 3分类整理完成！")
-
-
-# def delete_main_1():
-#     casme2_dst_root = '/kaggle/working/CASME2_onset_apex_offset'
-#     samm_dst_root = '/kaggle/working/SAMM_onset_apex_offset'
-#     casme3_dst_root = '/kaggle/working/CASME3_onset_apex_offset'
-#     delete_directory(casme2_dst_root)
-#     delete_directory(samm_dst_root)
-#     delete_directory(casme3_dst_root)
+    print(f"✅ 积极 (0)：{total_count['0']} 张")
+    print(f"✅ 消极 (1)：{total_count['1']} 张")
+    print(f"✅ 惊讶 (2)：{total_count['2']} 张")
+    print(f"📊 总计：{sum(total_count.values())} 张")
 
 
 if __name__ == '__main__':
-    # ===================== SMIC 数据集（无标注，按文件夹分类）=====================
+    # ===================== SMIC 数据集（按文件名 po/ne/sur 分类）=====================
     SMIC_onset_apex_offset_retinaface = "/kaggle/working/SMIC_onset_apex_offset_retinaface"
     SMIC_optflow_retinaface = "/kaggle/working/SMIC_optflow_retinaface"
     SMIC_data_folder_3 = "/kaggle/working/SMIC_retinaface_3"
 
-    # 分类
+    # 执行分类
     SMIC_3c(SMIC_onset_apex_offset_retinaface, SMIC_optflow_retinaface, SMIC_data_folder_3)
 
     # 打包
