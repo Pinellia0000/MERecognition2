@@ -205,19 +205,7 @@ def process_loso_each_CASME3(data_folder, loso_folder, num_classes, dataset_name
     print(f"最终压缩包生成: {final_zip}")
 
 
-def delete_main_2():
-    casme2_dst_root_path = "/kaggle/working/CASME2_onset_apex_offset_retinaface"
-    samm_dst_root_path = "/kaggle/working/SAMM_onset_apex_offset_retinaface"
-    casme3_dst_root_path = "/kaggle/working/CASME3_onset_apex_offset_retinaface"
-    casme2_output_folder = "/kaggle/working/CASME2_optflow_retinaface"
-    samm_output_folder = "/kaggle/working/SAMM_optflow_retinaface"
-    casme3_output_folder = "/kaggle/working/CASME3_optflow_retinaface"
-    delete_directory(casme2_dst_root_path)
-    delete_directory(samm_dst_root_path)
-    delete_directory(casme3_dst_root_path)
-    delete_directory(casme2_output_folder)
-    delete_directory(samm_output_folder)
-    delete_directory(casme3_output_folder)
+
 
 
 if __name__ == "__main__":

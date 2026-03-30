@@ -365,8 +365,8 @@ def delete_main_1():
 
 
 if __name__ == '__main__':
-    # 减少一些目录
-    delete_main_1()
+    # # 减少一些目录
+    # delete_main_1()
     # CASMEⅡ
     # 数据集路径
     CASME2_onset_apex_offset_retinaface = '/kaggle/working/CASME2_onset_apex_offset_retinaface'
@@ -389,45 +389,45 @@ if __name__ == '__main__':
     zip_frames(data_folder_3, zipPath)
     print_directory_structure(data_folder_3, directory_name='CASME2_retinaface_3')
 
-    # SAMM
-    # 数据集路径
-    SAMM_onset_apex_offset_retinaface = '/kaggle/working/SAMM_onset_apex_offset_retinaface'
-    SAMM_optflow_retinaface = '/kaggle/working/SAMM_optflow_retinaface'
-    data_folder_3 = '/kaggle/working/SAMM_retinaface_3'
-    annotation_file = '/kaggle/input/samm-dataset/SAMM/SAMM_Micro_FACS_Codes_v2.xlsx'
-
-    # 整理数据
-    SAMM_3c(SAMM_onset_apex_offset_retinaface, SAMM_optflow_retinaface,
-            data_folder_3, annotation_file)
-
-    # 打包 3分类
-    zipPath = '/kaggle/working/SAMM_retinaface_3.zip'
-    zip_frames(data_folder_3, zipPath)
-    print_directory_structure(data_folder_3, directory_name='SAMM_retinaface_3')
-
-    # CASME3
-    # 数据集路径
-    CASME3_onset_apex_offset_retinaface = '/kaggle/working/CASME3_onset_apex_offset_retinaface'
-    CASME3_optflow_retinaface = '/kaggle/working/CASME3_optflow_retinaface'
-    data_folder_7 = '/kaggle/working/CASME3_retinaface_7'
-    data_folder_4 = '/kaggle/working/CASME3_retinaface_4'
-    data_folder_3 = '/kaggle/working/CASME3_retinaface_3'
-    annotation_file = '/kaggle/input/casme3/cas(me)3_part_A_ME_label_JpgIndex_v2_20250903.xlsx'
-
-    # 整理数据
-    CASME3_7c_4c_3c(CASME3_onset_apex_offset_retinaface, CASME3_optflow_retinaface,
-                    data_folder_7, data_folder_4, data_folder_3, annotation_file)
-    # 打包 7分类
-    zipPath = '/kaggle/working/CASME2_retinaface_7.zip'
-    zip_frames(data_folder_7, zipPath)
-    print_directory_structure(data_folder_7, directory_name='CASME2_retinaface_7')
-
-    # 打包 4分类
-    zipPath = '/kaggle/working/CASME3_retinaface_4.zip'
-    zip_frames(data_folder_4, zipPath)
-    print_directory_structure(data_folder_4, directory_name='CASME3_retinaface_4')
-
-    # 打包 3分类
-    zipPath = '/kaggle/working/CASME3_retinaface_3.zip'
-    zip_frames(data_folder_3, zipPath)
-    print_directory_structure(data_folder_3, directory_name='CASME3_retinaface_3')
+    # # SAMM
+    # # 数据集路径
+    # SAMM_onset_apex_offset_retinaface = '/kaggle/working/SAMM_onset_apex_offset_retinaface'
+    # SAMM_optflow_retinaface = '/kaggle/working/SAMM_optflow_retinaface'
+    # data_folder_3 = '/kaggle/working/SAMM_retinaface_3'
+    # annotation_file = '/kaggle/input/samm-dataset/SAMM/SAMM_Micro_FACS_Codes_v2.xlsx'
+    #
+    # # 整理数据
+    # SAMM_3c(SAMM_onset_apex_offset_retinaface, SAMM_optflow_retinaface,
+    #         data_folder_3, annotation_file)
+    #
+    # # 打包 3分类
+    # zipPath = '/kaggle/working/SAMM_retinaface_3.zip'
+    # zip_frames(data_folder_3, zipPath)
+    # print_directory_structure(data_folder_3, directory_name='SAMM_retinaface_3')
+    #
+    # # CASME3
+    # # 数据集路径
+    # CASME3_onset_apex_offset_retinaface = '/kaggle/working/CASME3_onset_apex_offset_retinaface'
+    # CASME3_optflow_retinaface = '/kaggle/working/CASME3_optflow_retinaface'
+    # data_folder_7 = '/kaggle/working/CASME3_retinaface_7'
+    # data_folder_4 = '/kaggle/working/CASME3_retinaface_4'
+    # data_folder_3 = '/kaggle/working/CASME3_retinaface_3'
+    # annotation_file = '/kaggle/input/casme3/cas(me)3_part_A_ME_label_JpgIndex_v2_20250903.xlsx'
+    #
+    # # 整理数据
+    # CASME3_7c_4c_3c(CASME3_onset_apex_offset_retinaface, CASME3_optflow_retinaface,
+    #                 data_folder_7, data_folder_4, data_folder_3, annotation_file)
+    # # 打包 7分类
+    # zipPath = '/kaggle/working/CASME2_retinaface_7.zip'
+    # zip_frames(data_folder_7, zipPath)
+    # print_directory_structure(data_folder_7, directory_name='CASME2_retinaface_7')
+    #
+    # # 打包 4分类
+    # zipPath = '/kaggle/working/CASME3_retinaface_4.zip'
+    # zip_frames(data_folder_4, zipPath)
+    # print_directory_structure(data_folder_4, directory_name='CASME3_retinaface_4')
+    #
+    # # 打包 3分类
+    # zipPath = '/kaggle/working/CASME3_retinaface_3.zip'
+    # zip_frames(data_folder_3, zipPath)
+    # print_directory_structure(data_folder_3, directory_name='CASME3_retinaface_3')

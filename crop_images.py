@@ -135,26 +135,26 @@ if __name__ == '__main__':
     print_directory_structure(casme2_dst_root_path, directory_name='CASME2_onset_apex_offset_retinaface')
 
 
-    # SAMM 数据集
-    # 原始图片路径（已保留结构：）
-    samm_src_root_path = "/kaggle/working/SAMM_onset_apex_offset"
-    # 新保存路径
-    samm_dst_root_path = "/kaggle/working/SAMM_onset_apex_offset_retinaface"
-    crop_images_retinaface(samm_src_root_path, samm_dst_root_path)
-    # 打包
-    zipPath = '/kaggle/working/SAMM_onset_apex_offset_retinaface.zip'
-    zip_frames(samm_dst_root_path, zipPath)
-    # 输出路径
-    print_directory_structure(samm_dst_root_path, directory_name='SAMM_onset_apex_offset_retinaface')
-
-
-    # CAS(ME)^3 数据集
-    # 原始图片路径（已保留结构：）
-    casme3_src_root_path = "/kaggle/working/CASME3_onset_apex_offset"
-    # 新保存路径
-    casme3_dst_root_path = "/kaggle/working/CASME3_onset_apex_offset_retinaface"
-    crop_images_retinaface(casme3_src_root_path, casme3_dst_root_path)
-    zipPath = '/kaggle/working/CASME3_onset_apex_offset_retinaface.zip'
-    zip_frames(casme3_dst_root_path, zipPath)
-    print_directory_structure(casme3_dst_root_path, directory_name='CASME3_onset_apex_offset_retinaface')
-
+    # # SAMM 数据集
+    # # 原始图片路径（已保留结构：）
+    # samm_src_root_path = "/kaggle/working/SAMM_onset_apex_offset"
+    # # 新保存路径
+    # samm_dst_root_path = "/kaggle/working/SAMM_onset_apex_offset_retinaface"
+    # crop_images_retinaface(samm_src_root_path, samm_dst_root_path)
+    # # 打包
+    # zipPath = '/kaggle/working/SAMM_onset_apex_offset_retinaface.zip'
+    # zip_frames(samm_dst_root_path, zipPath)
+    # # 输出路径
+    # print_directory_structure(samm_dst_root_path, directory_name='SAMM_onset_apex_offset_retinaface')
+    #
+    #
+    # # CAS(ME)^3 数据集
+    # # 原始图片路径（已保留结构：）
+    # casme3_src_root_path = "/kaggle/working/CASME3_onset_apex_offset"
+    # # 新保存路径
+    # casme3_dst_root_path = "/kaggle/working/CASME3_onset_apex_offset_retinaface"
+    # crop_images_retinaface(casme3_src_root_path, casme3_dst_root_path)
+    # zipPath = '/kaggle/working/CASME3_onset_apex_offset_retinaface.zip'
+    # zip_frames(casme3_dst_root_path, zipPath)
+    # print_directory_structure(casme3_dst_root_path, directory_name='CASME3_onset_apex_offset_retinaface')
+    #

@@ -216,30 +216,30 @@ if __name__ == "__main__":
     # 输出关键帧结构
     print_directory_structure(casme2_dst_root, directory_name="CASME2_onset_apex_offset")
 
-    # SAMM 数据集
-    # 路径配置
-    samm_src_root = '/kaggle/input/samm-dataset/SAMM'
-    samm_dst_root = '/kaggle/working/SAMM_onset_apex_offset'
-    # 读取 Excel 标注文件
-    samm_excel_path = '/kaggle/input/samm-dataset/SAMM/SAMM_Micro_FACS_Codes_v2.xlsx'
-    get_SAMM_onset_apex_offset(samm_src_root, samm_dst_root, samm_excel_path)
-    # 打包
-    zipPath = '/kaggle/working/SAMM_onset_apex_offset.zip'
-    zip_frames(samm_dst_root, zipPath)
-    # 输出关键帧结构
-    print_directory_structure(samm_dst_root, directory_name="SAMM_onset_apex_offset")
-
-    # CASME3 数据集
-    # 路径配置
-    casme3_src_root = '/kaggle/input/casme3/Part_A_ME_clip/Part_A_ME_clip/frame'
-    casme3_dst_root = '/kaggle/working/CASME3_onset_apex_offset'
-    # 读取 Excel 标注文件
-    casme3_excel_path = '/kaggle/input/casme3/cas(me)3_part_A_ME_label_JpgIndex_v2_20250903.xlsx'
-    get_CASME3_onset_apex_offset(casme3_src_root, casme3_dst_root, casme3_excel_path)
-    # 打包
-    zipPath = '/kaggle/working/CASME3_onset_apex_offset.zip'
-    zip_frames(casme3_dst_root, zipPath)
-    # 输出关键帧结构
-    print("CASME3关键帧目录结构如下：\n")
-    print_directory_structure(casme3_dst_root, directory_name="CASME3_onset_apex_offset")
+    # # SAMM 数据集
+    # # 路径配置
+    # samm_src_root = '/kaggle/input/samm-dataset/SAMM'
+    # samm_dst_root = '/kaggle/working/SAMM_onset_apex_offset'
+    # # 读取 Excel 标注文件
+    # samm_excel_path = '/kaggle/input/samm-dataset/SAMM/SAMM_Micro_FACS_Codes_v2.xlsx'
+    # get_SAMM_onset_apex_offset(samm_src_root, samm_dst_root, samm_excel_path)
+    # # 打包
+    # zipPath = '/kaggle/working/SAMM_onset_apex_offset.zip'
+    # zip_frames(samm_dst_root, zipPath)
+    # # 输出关键帧结构
+    # print_directory_structure(samm_dst_root, directory_name="SAMM_onset_apex_offset")
+    #
+    # # CASME3 数据集
+    # # 路径配置
+    # casme3_src_root = '/kaggle/input/casme3/Part_A_ME_clip/Part_A_ME_clip/frame'
+    # casme3_dst_root = '/kaggle/working/CASME3_onset_apex_offset'
+    # # 读取 Excel 标注文件
+    # casme3_excel_path = '/kaggle/input/casme3/cas(me)3_part_A_ME_label_JpgIndex_v2_20250903.xlsx'
+    # get_CASME3_onset_apex_offset(casme3_src_root, casme3_dst_root, casme3_excel_path)
+    # # 打包
+    # zipPath = '/kaggle/working/CASME3_onset_apex_offset.zip'
+    # zip_frames(casme3_dst_root, zipPath)
+    # # 输出关键帧结构
+    # print("CASME3关键帧目录结构如下：\n")
+    # print_directory_structure(casme3_dst_root, directory_name="CASME3_onset_apex_offset")
 
