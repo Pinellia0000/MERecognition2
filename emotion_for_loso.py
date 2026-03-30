@@ -373,7 +373,7 @@ if __name__ == '__main__':
     CASME2_optflow_retinaface = '/kaggle/working/CASME2_optflow_retinaface'
     data_folder_5 = '/kaggle/working/CASME2_retinaface_5'
     data_folder_3 = '/kaggle/working/CASME2_retinaface_3'
-    annotation_file = '/kaggle/input/casmeii/CASME2-coding-20140508.xlsx'
+    annotation_file = '/kaggle/input/datasets/garlic0000/casmeii/CASME2-coding-20140508.xlsx'
 
     # 整理数据
     CASME2_5c_3c(CASME2_onset_apex_offset_retinaface, CASME2_optflow_retinaface,
