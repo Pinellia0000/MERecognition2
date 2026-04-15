@@ -141,7 +141,8 @@ def process_loso_each(data_folder, loso_folder, num_classes, dataset_name="Datas
         if not os.path.exists(class_path):
             continue
         for file in os.listdir(class_path):
-            if file.startswith("sub") or file.startswith("spNO"):
+            # 因为只处理SMIC这一个数据集，所以这样写没问题
+            if file.startswith("sub") or file.startswith("spNO") or file.startswith("s"):
                 subjects.add(file.split("_")[0])
             else:
                 subjects.add(file.split("_")[0].zfill(3))
